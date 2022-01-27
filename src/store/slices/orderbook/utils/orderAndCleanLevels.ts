@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import {PriceLevel} from '../types';
 
 enum Order {
   DESC = 'desc',
@@ -6,7 +7,7 @@ enum Order {
 }
 
 type Params = {
-  levels: {price: number; size: number}[];
+  levels: PriceLevel[];
   field: string;
   order?: Order;
 };

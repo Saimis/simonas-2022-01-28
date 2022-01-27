@@ -1,34 +1,18 @@
 import {createSlice, createAction, PayloadAction} from '@reduxjs/toolkit';
 import _ from 'lodash';
 import type {RootState} from '../../';
-import {ProductId} from '../../middleware/orderbookSocketMiddleware';
+import {ProductId, MessageQueue} from '../orderbook/types';
 import {normalizeLevels} from './utils/normalizeLevels';
-import {orderAndCleanLevels} from './utils/orderAndCleanLevels';
-import {calculateTotals} from './utils/calculateTotals';
-import {MessageQueue} from '../../middleware/orderbookSocketMiddleware';
-
-export type PriceLevel = {price: number; size: number; total?: number};
-
-export enum PriceSide {
-  BID = 'BID',
-  ASK = 'ASK',
-}
-
-export type OrderbookState = {
-  book: any;
-  productId: ProductId;
-  isConnected: boolean;
-  isLoading: boolean;
-  subscriptionPaused: boolean;
-  visibleItems: number;
-};
+import {OrderbookState} from './types';
+import {prepareLevelsForStorage} from './utils/prepareLevelsForStorage';
+export * from './types';
 
 const initialState: OrderbookState = {
   book: {asks: [], bids: []},
   productId: ProductId.XBTUSD,
   isConnected: false,
   isLoading: true,
-  subscriptionPaused: true,
+  subscriptionPaused: false,
   visibleItems: 10,
 };
 
@@ -39,56 +23,23 @@ export const orderbookSlice = createSlice({
     snapshotUpdated: (state, action: PayloadAction<MessageQueue>) => {
       const {asks, bids} = normalizeLevels(action.payload);
 
-      const orderedAsks = orderAndCleanLevels({
-        levels: asks,
-        field: 'price',
+      state.book = prepareLevelsForStorage({
+        asks,
+        bids,
       });
-
-      const orderedBids = orderAndCleanLevels({
-        levels: bids,
-        field: 'price',
-      });
-
-      state.book = {
-        asks: calculateTotals({
-          records: orderedAsks,
-          type: PriceSide.ASK,
-        }),
-        bids: calculateTotals({
-          records: orderedBids,
-          type: PriceSide.BID,
-        }),
-      };
     },
     bookUpdated: (state, action: PayloadAction<MessageQueue>) => {
       const {asks, bids} = normalizeLevels(action.payload);
 
       const uniqueBids = _.uniqBy(bids, 'price');
-
-      const orderedBids = orderAndCleanLevels({
-        levels: uniqueBids,
-        field: 'price',
-      });
-
       const uniqueAsks = _.uniqBy(asks, 'price');
 
-      const orderedAsks = orderAndCleanLevels({
-        levels: uniqueAsks,
-        field: 'price',
+      state.book = prepareLevelsForStorage({
+        asks: uniqueAsks,
+        bids: uniqueBids,
       });
-
-      state.book = {
-        asks: calculateTotals({
-          records: orderedAsks,
-          type: PriceSide.ASK,
-        }),
-        bids: calculateTotals({
-          records: orderedBids,
-          type: PriceSide.BID,
-        }),
-      };
     },
-    subcriptionPaused: state => {
+    subscriptionPaused: state => {
       state.subscriptionPaused = true;
     },
     connectionClosed: state => {
@@ -98,6 +49,11 @@ export const orderbookSlice = createSlice({
       state.isConnected = action.payload;
     },
     subscribedToProduct: (state, action: PayloadAction<ProductId>) => {
+      state.productId = action.payload;
+      state.subscriptionPaused = false;
+    },
+    unsubscribedFromProduct: (state, action: PayloadAction<ProductId>) => {
+      state.book = {asks: [], bids: []};
       state.productId = action.payload;
       state.subscriptionPaused = false;
     },
@@ -113,11 +69,13 @@ export const connectionInitiated = createAction<undefined>(
 
 export const {
   bookUpdated,
-  subcriptionPaused,
+  subscriptionPaused,
   subscribedToProduct,
+  unsubscribedFromProduct,
   snapshotUpdated,
   connectionEstablished,
   connectionClosed,
+  visibleItemsSet,
 } = orderbookSlice.actions;
 
 export const connectionStatus = (state: RootState) =>

@@ -4,44 +4,24 @@ import {
   connectionEstablished,
   bookUpdated,
   snapshotUpdated,
-  subcriptionPaused,
+  subscriptionPaused,
   subscribedToProduct,
+  unsubscribedFromProduct,
   connectionClosed,
 } from '../slices/orderbook';
 import {throttledSetBook} from './utils/throttledSetBook';
 import {makeQueue} from './utils/makeQueue';
-
-export enum FeedType {
-  SNAPSHOT = 'book_ui_1_snapshot',
-  DELTA = 'book_ui_1',
-}
-
-export enum ProductId {
-  XBTUSD = 'PI_XBTUSD',
-  ETHUSD = 'PI_ETHUSD',
-}
-
-export type Message = {
-  feed: FeedType;
-  product_id: ProductId;
-  bids: [number, number][];
-  asks: [number, number][];
-};
-
-export type MessageQueue = {
-  asks: [number, number][];
-  bids: [number, number][];
-};
+import {FeedType, Message, MessageQueue} from '../slices/orderbook/types';
 
 export const orderbookSocketMiddleware: Middleware = store => {
   let socket: WebSocket;
   let messageQueue: MessageQueue = {asks: [], bids: []};
 
-  return next => action => {
+  return next => async action => {
     const isConnectionEstablished = store.getState().orderbook.isConnected;
 
-    switch (action) {
-      case action.match(connectionInitiated):
+    switch (true) {
+      case connectionInitiated.match(action):
         socket = new WebSocket('wss://www.cryptofacilities.com/ws/v1');
 
         socket.onopen = () => {
@@ -64,11 +44,9 @@ export const orderbookSocketMiddleware: Middleware = store => {
           }
         };
         break;
-      case action.match(subcriptionPaused):
+      case subscriptionPaused.match(action):
         if (isConnectionEstablished && socket) {
           const productId = store.getState().orderbook.productId;
-
-          messageQueue = {asks: [], bids: []};
 
           socket.send(
             JSON.stringify({
@@ -79,11 +57,23 @@ export const orderbookSocketMiddleware: Middleware = store => {
           );
         }
         break;
-      case action.match(subscribedToProduct):
+      case unsubscribedFromProduct.match(action):
+        if (isConnectionEstablished && socket) {
+          socket.send(
+            JSON.stringify({
+              event: 'unsubscribe',
+              feed: 'book_ui_1',
+              product_ids: [action.payload],
+            }),
+          );
+
+          messageQueue = {asks: [], bids: []};
+          store.dispatch(bookUpdated({asks: [], bids: []}));
+        }
+        break;
+      case subscribedToProduct.match(action):
         if (isConnectionEstablished && socket) {
           messageQueue = {asks: [], bids: []};
-
-          store.dispatch(bookUpdated({asks: [], bids: []}));
 
           socket.send(
             JSON.stringify({
@@ -94,11 +84,11 @@ export const orderbookSocketMiddleware: Middleware = store => {
           );
         }
         break;
-      case action.match(connectionClosed):
+      case connectionClosed.match(action):
         socket.close();
         break;
-      default:
-        next(action);
     }
+
+    next(action);
   };
 };

@@ -1,5 +1,5 @@
 import {throttle} from 'lodash';
-import {MessageQueue} from '../orderbookSocketMiddleware';
+import {MessageQueue} from '~/store/slices/orderbook';
 import {MiddlewareAPI} from 'redux';
 
 type Props = {
@@ -11,4 +11,5 @@ type Props = {
 export const throttledSetBook = throttle(
   ({data, store, bookUpdated}: Props) => store.dispatch(bookUpdated(data)),
   500,
+  {trailing: false},
 );
