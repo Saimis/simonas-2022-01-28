@@ -27,7 +27,10 @@ export type MessageQueue = {
   bids: [number, number][];
 };
 export type OrderbookState = {
-  book: any;
+  book: {
+    asks: PriceLevel[];
+    bids: PriceLevel[];
+  };
   productId: ProductId;
   isConnected: boolean;
   isLoading: boolean;

@@ -93,7 +93,4 @@ export const orderBookSelector = (
   };
 };
 
-export const socketConnected = (state: RootState) =>
-  state.orderbook.book.isConnected;
-
 export const orderbookReducer = orderbookSlice.reducer;

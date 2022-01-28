@@ -1,16 +1,20 @@
 import {MessageQueue} from '~/store/slices/orderbook';
 
 export const makeQueue = ({
+  setQueue,
+  getQueue,
   dataJson,
-  messageQueue,
 }: {
+  setQueue: (newQueue: MessageQueue) => void;
+  getQueue: () => MessageQueue;
   dataJson: MessageQueue;
-  messageQueue: MessageQueue;
 }) => {
-  const {asks: queueAsks, bids: queueBids} = messageQueue;
+  const {asks: queueAsks, bids: queueBids} = getQueue();
 
-  return {
+  const newQueue = {
     asks: [...(dataJson.asks === undefined ? [] : dataJson.asks), ...queueAsks],
     bids: [...(dataJson.bids === undefined ? [] : dataJson.bids), ...queueBids],
   };
+
+  setQueue(newQueue);
 };

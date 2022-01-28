@@ -3,13 +3,17 @@ import {MessageQueue} from '~/store/slices/orderbook';
 import {MiddlewareAPI} from 'redux';
 
 type Props = {
-  data: MessageQueue;
+  getQueue: () => MessageQueue;
   store: MiddlewareAPI;
   bookUpdated: any;
 };
 
 export const throttledSetBook = throttle(
-  ({data, store, bookUpdated}: Props) => store.dispatch(bookUpdated(data)),
+  ({getQueue, store, bookUpdated}: Props) => {
+    const queue = getQueue();
+
+    store.dispatch(bookUpdated(queue));
+  },
   500,
   {trailing: false},
 );
