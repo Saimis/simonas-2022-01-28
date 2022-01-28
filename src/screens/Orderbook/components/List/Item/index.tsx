@@ -10,7 +10,7 @@ type Props = {
   priceSide: PriceSide;
 };
 
-export const OrderbookListItem: FC<Props> = memo(({priceLevel, priceSide}) => {
+export const OrderbookListItem: FC<Props> = ({priceLevel, priceSide}) => {
   const {price = 0, size, total = 0} = priceLevel;
   const isBids = priceSide === PriceSide.BID;
   const textColor = isBids ? 'green' : 'red';
@@ -37,4 +37,4 @@ export const OrderbookListItem: FC<Props> = memo(({priceLevel, priceSide}) => {
       </Box>
     </Box>
   );
-}, _.isEqual);
+};
