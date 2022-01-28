@@ -3,10 +3,6 @@ describe('Orderbook screen', () => {
     await device.launchApp();
   });
 
-  beforeEach(async () => {
-    await device.reloadReactNative();
-  });
-
   it('should have orderbook header item', async () => {
     await expect(element(by.id('OrderBookHeader'))).toBeVisible();
   });
@@ -20,12 +16,16 @@ describe('Orderbook screen', () => {
   });
 
   it('should show ETH after tap', async () => {
+    await expect(element(by.text('Toggle Feed'))).toExist();
+  });
+
+  it('should show ETH after tap', async () => {
     await element(by.id('FeedToggleButton')).tap();
-    await expect(element(by.id('FeedToggleButton-label'))).toHaveText('Toggle Feed PI_ETHUSD');
+    await expect(element(by.text('PI_ETHUSD'))).toExist();
   });
 
   it('should show BTC after tap', async () => {
     await element(by.id('FeedToggleButton')).tap();
-    await expect(element(by.id('FeedToggleButton-label'))).toHaveText('Toggle Feed PI_XBTUSD');
+    await expect(element(by.text('PI_XBTUSD'))).toExist();
   });
 });

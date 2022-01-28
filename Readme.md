@@ -1,0 +1,1 @@
+Tested on iOS simulator, so mostly optimized for that. Android works with serious throttling.
