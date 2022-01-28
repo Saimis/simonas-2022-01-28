@@ -5,6 +5,7 @@ import {
   connectionInitiated,
   connectionStatus,
   visibleItemsSet,
+  connectionError,
 } from '~/store/slices/orderbook';
 import {LayoutChangeEvent} from 'react-native';
 import {Box} from '~/components/Box';
@@ -17,10 +18,12 @@ import {Actions} from './components/Actions';
 import {ResumeConnection} from './components/ResumeConnection';
 import {ProductId} from '~/store/slices/orderbook/types';
 import {useAppState} from './hooks/useAppState';
+import {Error} from './components/Error';
 
 export const Orderbook = () => {
   const dispatch = useAppDispatch();
   const isConnected = useAppSelector(connectionStatus);
+  const errors = useAppSelector(connectionError);
 
   useAppState();
 
@@ -47,6 +50,14 @@ export const Orderbook = () => {
       </Box>
       <Actions />
       <ResumeConnection />
+      {errors && (
+        <Error
+          resolve={() => {
+            console.log('click')
+            dispatch(connectionInitiated())}}
+          errorMessage={errors}
+        />
+      )}
     </ScreenTemplate>
   );
 };

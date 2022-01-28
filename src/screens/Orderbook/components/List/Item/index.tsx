@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import React, {FC, memo} from 'react';
+import React, {FC} from 'react';
 import {Box} from '~/components/Box';
 import {Text} from '~/components/Text';
 import {PriceLevel, PriceSide} from '~/store/slices/orderbook';

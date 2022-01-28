@@ -46,7 +46,9 @@ export const ResumeConnection = () => {
           textAlign="center">
           Updates have been paused
         </Text>
-        <Button onPress={onPress} testID="ResumSubscriptionButton">Resume</Button>
+        <Button onPress={onPress} testID="ResumSubscriptionButton">
+          Resume
+        </Button>
       </Box>
     </Box>
   );

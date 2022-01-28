@@ -14,7 +14,10 @@ const initialState: OrderbookState = {
   isLoading: true,
   subscriptionPaused: false,
   visibleItems: 10,
+  errors: null,
 };
+
+const HEIGHT_COEFFICIENT = 0.01428571429;
 
 export const orderbookSlice = createSlice({
   name: 'orderbook',
@@ -47,13 +50,17 @@ export const orderbookSlice = createSlice({
     },
     connectionEstablished: (state, action: PayloadAction<boolean>) => {
       state.isConnected = action.payload;
+      state.errors = null;
     },
     subscribedToProduct: (state, action: PayloadAction<ProductId>) => {
       state.productId = action.payload;
       state.subscriptionPaused = false;
     },
     visibleItemsSet: (state, action: PayloadAction<number>) => {
-      state.visibleItems = Math.round(action.payload * 0.01428571429);
+      state.visibleItems = Math.round(action.payload * HEIGHT_COEFFICIENT);
+    },
+    errorsReceived: (state, action: PayloadAction<string>) => {
+      state.errors = action.payload;
     },
   },
 });
@@ -74,10 +81,13 @@ export const {
   connectionEstablished,
   connectionClosed,
   visibleItemsSet,
+  errorsReceived,
 } = orderbookSlice.actions;
 
 export const connectionStatus = (state: RootState) =>
   state.orderbook.isConnected;
+
+export const connectionError = (state: RootState) => state.orderbook.errors;
 
 export const orderBookSelector = (
   state: RootState,

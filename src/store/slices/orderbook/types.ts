@@ -36,4 +36,5 @@ export type OrderbookState = {
   isLoading: boolean;
   subscriptionPaused: boolean;
   visibleItems: number;
+  errors: string | null;
 };

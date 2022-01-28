@@ -8,6 +8,7 @@ import {
   subscribedToProduct,
   unsubscribedFromProduct,
   connectionClosed,
+  errorsReceived,
 } from '../slices/orderbook';
 import {throttledSetBook} from './utils/throttledSetBook';
 import {makeQueue} from './utils/makeQueue';
@@ -51,6 +52,15 @@ export const orderbookSocketMiddleware: Middleware = store => {
             throttledSetBookRef({getQueue, store, bookUpdated});
           }
         };
+
+        socket.onerror = (error: WebSocketErrorEvent) => {
+          try {
+            store.dispatch(errorsReceived(error.message));
+          } catch (e) {
+            console.log(e);
+          }
+        };
+
         break;
       case subscriptionPaused.match(action):
         if (isConnectionEstablished && socket) {
