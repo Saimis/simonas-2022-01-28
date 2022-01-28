@@ -4,6 +4,7 @@ import {Text} from '../Text';
 
 type Props = {
   title?: string;
+  color?: string;
 };
 
 export const Header: FC<Props> = ({title}) => {
@@ -12,8 +13,14 @@ export const Header: FC<Props> = ({title}) => {
   }
 
   return (
-    <Box paddingX={2}>
-      <Text fontSize="lg" fontWeight={700}>
+    <Box paddingX={2} pb={2} testID="GenericHeader">
+      <Text
+        fontSize="xl"
+        textAlign="left"
+        pl={2}
+        fontWeight={700}
+        color="gray"
+        testID="genericHeaderTitle">
         {title}
       </Text>
     </Box>

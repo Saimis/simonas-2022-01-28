@@ -21,7 +21,10 @@ export const ScreenTemplate: FC<Props> = ({
   title,
   children,
 }) => (
-  <StyledSafeAreaView flex={1} backgroundColor={backgroundColor}>
+  <StyledSafeAreaView
+    flex={1}
+    backgroundColor={backgroundColor}
+    testID="screenTemplate">
     <Header title={title} />
     {children}
   </StyledSafeAreaView>

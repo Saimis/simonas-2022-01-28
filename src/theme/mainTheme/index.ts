@@ -8,6 +8,7 @@ export const mainTheme = {
     sm: 14,
     md: 16,
     lg: 18,
+    xl: 20,
   },
   lineHeights: {
     sm: 14 * 1.6,
@@ -31,6 +32,7 @@ export const mainTheme = {
   borderWidths: {
     0: 0,
     1: 1,
+    2: 2,
   },
 };
 

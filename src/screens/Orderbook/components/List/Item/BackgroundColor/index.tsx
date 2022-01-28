@@ -12,11 +12,13 @@ export const BackgroundColor: FC<Props> = ({total, isBids}) => {
   const {highestTotal} = useAppSelector(orderBookSelector);
   const graphColor = isBids ? 'green-800' : 'red-800';
 
-  const graphWidth = total / highestTotal.total;
+  const {total: highTotal} = highestTotal;
 
-  if (!graphWidth) {
+  if (!highTotal) {
     return null;
   }
+
+  const graphWidth = total / highTotal;
 
   return (
     <Box

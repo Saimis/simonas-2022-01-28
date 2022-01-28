@@ -1,7 +1,7 @@
 import {createSlice, createAction, PayloadAction} from '@reduxjs/toolkit';
 import _ from 'lodash';
 import type {RootState} from '../../';
-import {ProductId, MessageQueue} from '../orderbook/types';
+import {ProductId, MessageQueue, PriceLevel} from '../orderbook/types';
 import {normalizeLevels} from './utils/normalizeLevels';
 import {OrderbookState} from './types';
 import {prepareLevelsForStorage} from './utils/prepareLevelsForStorage';
@@ -52,16 +52,15 @@ export const orderbookSlice = createSlice({
       state.productId = action.payload;
       state.subscriptionPaused = false;
     },
-    unsubscribedFromProduct: (state, action: PayloadAction<ProductId>) => {
-      state.book = {asks: [], bids: []};
-      state.productId = action.payload;
-      state.subscriptionPaused = false;
-    },
     visibleItemsSet: (state, action: PayloadAction<number>) => {
-      state.visibleItems = action.payload * 0.01428571429;
+      state.visibleItems = Math.round(action.payload * 0.01428571429);
     },
   },
 });
+
+export const unsubscribedFromProduct = createAction<undefined>(
+  'orderbook/unsubscribedFromProduct',
+);
 
 export const connectionInitiated = createAction<undefined>(
   'orderbook/connectionInitiated',
@@ -71,7 +70,6 @@ export const {
   bookUpdated,
   subscriptionPaused,
   subscribedToProduct,
-  unsubscribedFromProduct,
   snapshotUpdated,
   connectionEstablished,
   connectionClosed,
@@ -84,12 +82,12 @@ export const connectionStatus = (state: RootState) =>
 export const orderBookSelector = (
   state: RootState,
   limit: number = state.orderbook.visibleItems,
-) => {
+): {asks: PriceLevel[]; bids: PriceLevel[]; highestTotal: PriceLevel} => {
   const asks = _.takeRight(state.orderbook.book.asks, limit);
   const bids = _.take(state.orderbook.book.bids, limit);
 
   return {
-    highestTotal: _.maxBy([...asks, ...bids], 'total'),
+    highestTotal: _.maxBy([...asks, ...bids], 'total') as PriceLevel,
     asks: _.takeRight(state.orderbook.book.asks, limit),
     bids: _.take(state.orderbook.book.bids, limit),
   };

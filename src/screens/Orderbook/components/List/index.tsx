@@ -6,9 +6,10 @@ import {OrderbookListItem} from './Item';
 type Props = {
   items: PriceLevel[];
   priceSide: PriceSide;
+  testID: string;
 };
 
-export const List: FC<Props> = ({items = [], priceSide}) => {
+export const List: FC<Props> = ({items = [], priceSide, testID}) => {
   const renderItem = useCallback(
     ({item}) => <OrderbookListItem priceSide={priceSide} priceLevel={item} />,
     [priceSide],
@@ -16,6 +17,8 @@ export const List: FC<Props> = ({items = [], priceSide}) => {
 
   return (
     <FlatList
+      testID={testID}
+      scrollEnabled={false}
       data={items}
       renderItem={renderItem}
       keyExtractor={item => item.price.toString()}

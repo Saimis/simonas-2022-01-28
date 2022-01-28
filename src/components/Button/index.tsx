@@ -6,19 +6,22 @@ import {Text} from '../Text';
 type Props = {
   onPress: () => void;
   isDisabled?: boolean;
+  testID?: string;
 };
 
 const BoxButton = Box.withComponent(Pressable);
 
-export const Button: FC<Props> = ({onPress, isDisabled, children}) => {
+export const Button: FC<Props> = ({onPress, isDisabled, children, testID = 'genericButton'}) => {
   return (
     <BoxButton
       onPress={isDisabled ? undefined : onPress}
-      testID="button"
       alignItems="center"
+      testID={testID}
       alignSelf="center">
       <Box backgroundColor="purple" borderRadius="md" paddingX={6} paddingY={2}>
-        <Text fontWeight={700}>{children}</Text>
+        <Text fontWeight={700} testID={`${testID}-label`}>
+          {children}
+        </Text>
       </Box>
     </BoxButton>
   );

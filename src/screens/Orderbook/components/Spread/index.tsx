@@ -5,22 +5,16 @@ import {orderBookSelector} from '~/store/slices/orderbook';
 import {useAppSelector} from '~/store/hooks';
 import _ from 'lodash';
 import {RootState} from '~/store';
-import {PriceLevel} from '~/store/slices/orderbook';
+import {calculateSpread} from './utils/calculateSpread';
 
 export const Spread: FC = () => {
   const {bids = [], asks = []} = useAppSelector((state: RootState) =>
     orderBookSelector(state, 1),
   );
-
-  const highestBid: PriceLevel | undefined = _.first(bids);
-  const lowestAsk: PriceLevel | undefined = _.first(asks);
-
-  if (!highestBid || !lowestAsk) {
-    return null;
-  }
-
-  const spreadValue = Math.abs(highestBid?.price - lowestAsk?.price);
-  const spreadPercentage = (spreadValue / lowestAsk?.price) * 100;
+  const {spreadPercentage, spreadValue} = calculateSpread({
+    bids,
+    asks,
+  });
 
   return (
     <Box paddingY={2} alignItems="center">

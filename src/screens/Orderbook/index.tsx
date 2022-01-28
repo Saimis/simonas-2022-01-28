@@ -13,7 +13,7 @@ import {Header} from './components/Header';
 import {Spread} from './components/Spread';
 import {BidsList} from './components/BidsList';
 import {AsksList} from './components/AsksList';
-import {Footer} from './components/Footer';
+import {Actions} from './components/Actions';
 import {ResumeConnection} from './components/ResumeConnection';
 import {ProductId} from '~/store/slices/orderbook/types';
 import {useAppState} from './hooks/useAppState';
@@ -45,7 +45,7 @@ export const Orderbook = () => {
         <Spread />
         <BidsList />
       </Box>
-      <Footer />
+      <Actions />
       <ResumeConnection />
     </ScreenTemplate>
   );

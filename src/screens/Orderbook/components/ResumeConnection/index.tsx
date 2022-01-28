@@ -33,16 +33,20 @@ export const ResumeConnection = () => {
       alignItems="center"
       backgroundColor="black-transparent-75"
       paddingX={16}>
-      <Box bg="white" borderRadius="md" padding={10}>
+      <Box
+        bg="white"
+        borderRadius="md"
+        padding={10}
+        testID="PausedSubscriptionModal">
         <Text
           marginBottom={3}
-          color="black"
+          color="gray"
           fontSize="sm"
           fontWeight={500}
           textAlign="center">
           Updates have been paused
         </Text>
-        <Button onPress={onPress}>Resume</Button>
+        <Button onPress={onPress} testID="ResumSubscriptionButton">Resume</Button>
       </Box>
     </Box>
   );

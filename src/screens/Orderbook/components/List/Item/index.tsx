@@ -11,25 +11,25 @@ type Props = {
 };
 
 export const OrderbookListItem: FC<Props> = memo(({priceLevel, priceSide}) => {
-  const {price = 0, size, total} = priceLevel;
+  const {price = 0, size, total = 0} = priceLevel;
   const isBids = priceSide === PriceSide.BID;
   const textColor = isBids ? 'green' : 'red';
 
   return (
-    <Box paddingY={1.5} testID="orderbook-list-item">
+    <Box paddingY={1.5} testID="orderbookListItem">
       <BackgroundColor total={total} isBids={isBids} />
       <Box flexDirection="row" justifyContent="space-between" paddingX={6}>
-        <Box width={4 / 12} justifyContent="flex-end">
+        <Box flex={1} justifyContent="flex-end">
           <Text textAlign="right" fontWeight={700} color={textColor}>
             {price.toFixed(2).toLocaleString()}
           </Text>
         </Box>
-        <Box width={3 / 12} justifyContent="flex-end">
+        <Box flex={1} justifyContent="flex-end">
           <Text textAlign="right" fontWeight={700}>
             {size.toLocaleString()}
           </Text>
         </Box>
-        <Box width={3.5 / 12} justifyContent="flex-end">
+        <Box flex={1} justifyContent="flex-end">
           <Text textAlign="right" fontWeight={700}>
             {total.toLocaleString()}
           </Text>

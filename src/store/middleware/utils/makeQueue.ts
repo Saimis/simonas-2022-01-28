@@ -1,4 +1,4 @@
-import {MessageQueue} from '../orderbookSocketMiddleware';
+import {MessageQueue} from '~/store/slices/orderbook';
 
 export const makeQueue = ({
   dataJson,

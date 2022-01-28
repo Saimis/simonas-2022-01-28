@@ -19,7 +19,6 @@ export const orderbookSocketMiddleware: Middleware = store => {
 
   return next => async action => {
     const isConnectionEstablished = store.getState().orderbook.isConnected;
-
     switch (true) {
       case connectionInitiated.match(action):
         socket = new WebSocket('wss://www.cryptofacilities.com/ws/v1');
@@ -63,12 +62,11 @@ export const orderbookSocketMiddleware: Middleware = store => {
             JSON.stringify({
               event: 'unsubscribe',
               feed: 'book_ui_1',
-              product_ids: [action.payload],
+              product_ids: [store.getState().orderbook.productId],
             }),
           );
 
           messageQueue = {asks: [], bids: []};
-          store.dispatch(bookUpdated({asks: [], bids: []}));
         }
         break;
       case subscribedToProduct.match(action):
